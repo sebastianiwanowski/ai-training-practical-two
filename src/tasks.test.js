@@ -81,7 +81,7 @@ describe('Tasks', () => {
       });
 
       assert.ok(result);
-      assert.ok(result.success || result.data);
+      assert.strictEqual(result.title, 'Test Task');
     });
 
     it('should create a task and increment stats', async () => {
@@ -114,9 +114,7 @@ describe('Tasks', () => {
         assigneeId: 1,
       });
 
-      // Check the task was created (in the data wrapper or directly)
-      const taskData = result.data || result;
-      assert.strictEqual(taskData.priority, 'medium');
+      assert.strictEqual(result.priority, 'medium');
     });
 
     it('should set status to pending for new tasks', async () => {
@@ -125,8 +123,25 @@ describe('Tasks', () => {
         assigneeId: 1,
       });
 
-      const taskData = result.data || result;
-      assert.strictEqual(taskData.status, 'pending');
+      assert.strictEqual(result.status, 'pending');
+    });
+
+    it('should return a task object directly, not wrapped in a data envelope', async () => {
+      const result = await createTask({
+        title: 'Consistency check',
+        description: 'Verify response format',
+        assigneeId: 1,
+      });
+
+      // Must have task fields at the top level (not nested under .data)
+      assert.ok(result.id, 'response should have id at top level');
+      assert.strictEqual(result.title, 'Consistency check');
+      assert.strictEqual(result.assigneeId, 1);
+      assert.strictEqual(result.status, 'pending');
+      assert.ok(result.createdAt);
+      // Must NOT be wrapped
+      assert.strictEqual(result.data, undefined, 'response should not have a data wrapper');
+      assert.strictEqual(result.success, undefined, 'response should not have a success wrapper');
     });
   });
 
