@@ -1,4 +1,5 @@
 const http = require('http');
+const os = require('os');
 const { router } = require('./router');
 
 const PORT = process.env.PORT || 3000;
@@ -18,8 +19,12 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
+  const networkIP = Object.values(os.networkInterfaces())
+    .flat()
+    .find((i) => i && i.family === 'IPv4' && !i.internal)?.address;
   console.log(`Server running on http://localhost:${PORT}`);
+  if (networkIP) console.log(`  ➜  Network: http://${networkIP}:${PORT}`);
 });
 
 module.exports = { server };
