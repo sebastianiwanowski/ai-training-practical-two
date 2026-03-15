@@ -2,6 +2,9 @@
   "title": "AI-Assisted Bug Hunting Practical",
   "description": "Hands-on exercises for AI-assisted debugging using Claude Code with a vanilla Node.js Task Management API",
   "version": "1.0",
+  "ports": [
+    { "env": "PORT", "description": "HTTP server port" }
+  ],
   "setup": {
     "install": "npm install",
     "env": {
